@@ -1,0 +1,821 @@
+#Program
+LoadPackage("QPA");
+
+DeclareOperation("Booleanalgebra",[IsList]);
+
+InstallMethod(Booleanalgebra, "for a representation of a quiver", [IsList],0,function(LIST)
+
+local t,A,i,B,Q,K;
+
+t:=LIST[1];
+K:=LIST[2];
+t:=t-1;
+Q:=Quiver(["0","1"],[["0","1","x"]]);A:=PathAlgebra(K,Q);B:=A;
+for i in [1..t] do A:=TensorProductOfAlgebras(A,B);od;
+return(A);
+
+end);
+
+DeclareOperation("SizeSupp",[IsPathAlgebraMatModule]);
+InstallMethod(SizeSupp,"for a representation",[IsPathAlgebraMatModule],function(M)
+	local N,k,i;
+N:=M;
+k:=0;
+for i in DimensionVector(N) do 
+	if i>0 then 
+		k:=k+1; 
+	fi;
+od;
+return k;
+end);
+
+
+
+DeclareOperation("AllSubmodulesOfModuleT",[IsPathAlgebraMatModule]);
+InstallMethod( AllSubmodulesOfModuleT, 
+"for a representation",
+        [IsPathAlgebraMatModule], 
+        function(M)
+    local   field,  submodules,  length,  simples,  listofsubmodules,  
+            previousstep,  dim,  dimsub,  Vspaces,  newsubmodules,  U,  
+            MmodU,  allsimplesinU,  s,  newsubmodule,  V;
+    
+    field := LeftActingDomain( M );
+    if not IsFinite( field ) then
+        Error( "The module is not a module over an algebra over a finite field.\n" );
+    fi;
+    if IsZero( M ) then 
+        return [ IdentityMapping( M ) ];
+    fi;
+    submodules := [ SubRepresentationInclusion( M, [ ] ), IdentityMapping( M ) ];
+    if IsSimpleQPAModule( M ) then
+        return submodules;
+    fi;
+    
+    length := Dimension( M );
+    #
+    # Finding all simple submodules of M. 
+    #
+    simples := AllSimpleSubmodulesOfModule( M );
+    listofsubmodules := [ ];
+    listofsubmodules[ 1 ] := [ SubRepresentationInclusion( M, [ ] ) ];
+    Add( listofsubmodules, simples );
+    previousstep := simples; 
+    dim := Minimum([Dimension(M),SizeSupp(M)+1]);
+    dimsub := 1;
+    while dimsub < dim do
+        dimsub := dimsub + 1;
+        Vspaces := [ ];
+        newsubmodules := [ ];
+        for U in previousstep do
+            MmodU := CoKernelProjection( U );
+            allsimplesinU := AllSimpleSubmodulesOfModule( Range( MmodU ) ); 
+            for s in allsimplesinU do 
+                newsubmodule := PullBack( MmodU, s )[ 2 ];
+		if(Maximum(DimensionVector(Source(newsubmodule)))<2) then 
+		#Print(dimsub);
+		#Print(" ");
+		#Print(DimensionVector(Source(newsubmodule)));
+		#Print("\n");
+                V := Subspace( UnderlyingLeftModule( M ), 
+                             List( BasisVectors( Basis( Source( newsubmodule ) ) ), b -> ExtRepOfObj( ImageElm( newsubmodule, b ) ) ) );
+                if Length( newsubmodules ) = 0 then
+                    Add( newsubmodules, newsubmodule );
+                    Add( Vspaces, V );
+                else 
+                    if not ( V in Vspaces ) then
+                        Add( newsubmodules, newsubmodule );
+                        Add( Vspaces, V ); 
+                    fi;
+                fi;
+
+		fi;
+
+            od;
+        od;
+        Add( listofsubmodules, newsubmodules );
+        previousstep := newsubmodules;
+    od; 
+    
+    return listofsubmodules;
+end);
+
+
+
+DeclareOperation("SubmodulesOfModule",[IsPathAlgebraMatModule]);
+InstallMethod(SubmodulesOfModule,"For a representation of a quiver",[IsPathAlgebraMatModule],0,function(N)
+local U,M,S,i,l,P,SR;
+M:=N;
+U:=AllSubmodulesOfModule(M);
+S:=[];
+for i in [1..Size(U)] do 
+	for l in U[i] do 
+		Append(S,[Source(l)]);
+	od;
+od;
+S:=DuplicateFreeList(S);
+SR:=[];
+for i in S do 
+	if(IsIndecomposableModule(i))=true 
+		then Append(SR,[i]); 
+	fi; 
+od;
+P:=DecomposeModule(BasicVersionOfModule(DirectSumOfQPAModules(SR)));
+return(P);
+end);
+
+
+DeclareOperation("BinaryList",[IsList]);
+
+InstallMethod(BinaryList,"help",[IsList],0,function(LIST)
+local n,Ans,i,T;
+
+n:=LIST[1];
+T:=LIST[2];
+Ans:=[];
+for i in [1..Size(T)] do
+	Append(Ans,[0]);
+	od;
+for i in [0..Size(T)-1] do 
+	if(n-2^(Size(T)-i-1)>(-1)) then 
+		n:=n-2^(Size(T)-i-1);
+		Ans[(Size(T)-i)]:=1;
+	fi;
+od;
+return Ans;
+end);
+
+DeclareOperation("GetArrl",[IsList]);
+InstallMethod(GetArrl,"Get List of Arrows",[IsList],0,function(LIST)
+
+local Q,V,Arr,ArrL,Bint,DimVect,k,m;
+Q:=LIST[1];
+V:=VerticesOfQuiver(Q);
+Arr:=ArrowsOfQuiver(Q);
+m:=Size(V);
+Bint:=LIST[2];
+DimVect:=[];
+ArrL:=[];
+
+for k in [1..m] do 
+	Append(DimVect,[0]); 
+od;
+
+for k in [1..Size(Arr)] do
+	if (Bint[k]=1) then 
+		Append(ArrL,[Arr[k]]); 
+	fi; 
+od;
+return ArrL;
+end);
+
+
+DeclareOperation("GetDimVect",[IsList]);
+InstallMethod(GetDimVect,"Get the Dimension Vector",[IsList],0,function(LIST)
+local m,DimVect,Arr,ArrL,Q,Bint,i,k,V;
+Q:=LIST[1];
+ArrL:=LIST[2];
+V:=VerticesOfQuiver(Q);
+Arr:=ArrowsOfQuiver(Q);
+m:=Size(V);
+DimVect:=[];
+for k in [1..m] do
+	Append(DimVect,[0]); 
+od;
+for k in [1..m] do
+	for i in ArrL do
+		if (SourceOfPath(i)=V[k]) then 
+			DimVect[k]:=1; 
+		fi;
+		if (TargetOfPath(i)=V[k]) then 
+			DimVect[k]:=1; 
+		fi;
+	od;
+od;
+return DimVect;
+end);
+
+
+
+DeclareOperation("GetArrowReps",[IsList]);
+InstallMethod(GetArrowReps,"For Arrows and DimensionVector",[IsList],0,function(LIST)
+
+local ArrL,id,L,k;
+ArrL:=LIST[1];
+id:=LIST[2];
+L:=[];
+for k in ArrL do
+	Append(L,[[String(k),[[id]]]]); #Here we construct Tupels of the form [arrow,matrix]
+od;
+return L;
+end);
+
+DeclareOperation("IsIndecomposableQ",[IsList]);
+InstallMethod(IsIndecomposableQ,"For a List of Arrows",[IsList],0,function(LIST)
+local ArrL,k,Q,Vert,a,Arrows;
+
+ArrL:=LIST;
+Vert:=[];
+Arrows:=[];
+for k in ArrL do
+	Append(Vert,[String(SourceOfPath(k))]);
+	Append(Vert,[String(TargetOfPath(k))]);
+	a:=[String(SourceOfPath(k)),String(TargetOfPath(k)),String(k)];
+	Append(Arrows,[a]);
+od;
+Vert:=DuplicateFreeList(Vert);
+Q:=Quiver(Vert,Arrows);
+return IsConnectedQuiver(Q);
+end);
+
+
+
+DeclareOperation("DefRep",[IsList]); #We define a representation of a quiver
+InstallMethod(DefRep,"For defining a representation",[IsList],0,function(LIST)
+
+local A,DimVec,L,M;
+
+A:=LIST[1];
+DimVec:=LIST[2];
+L:=LIST[3];
+BreakOnError := false;
+M := CALL_WITH_CATCH(RightModuleOverPathAlgebra, [ A,DimVec,L])[2];;
+if(M=fail) then M:="fail";fi;
+BreakOnError := true;
+if(M="fail") then return SimpleModules(A)[1];fi;
+return M;
+
+end);
+
+DeclareOperation("AllThinModules",[IsAlgebra]);
+InstallMethod(AllThinModules,"for a Algebra",[IsAlgebra],0,function(ALGEBRA)
+
+local A,Q,Arr,ArrL,i,Bint,DimVect,m,T,F,id,thin,L,D;
+A:=ALGEBRA;
+Q:=QuiverOfPathAlgebra(A);
+F:=LeftActingDomain(A);
+id:=Identity(F);
+m:=Size(VerticesOfQuiver(Q));	
+thin:=[];
+for i in [1..m] do
+	Append(thin,[SimpleModules(A)[i]]);
+od;
+Arr:=ArrowsOfQuiver(Q);
+T:=[];
+for i in [1..Size(Arr)] do 
+	Append(T,[0]);
+od;
+Size(Arr);
+for i in [1..2^Size(Arr)-1] do 
+	Bint:=BinaryList([i,T]);
+	ArrL:=GetArrl([Q,Bint]);
+	if(IsIndecomposableQ(ArrL)) then
+		DimVect:=GetDimVect([Q,ArrL]);
+		L:=GetArrowReps([ArrL,id]);
+		D:=DefRep([A,DimVect,L]);
+		if((D=SimpleModules(A)[1])=false) then
+			Append(thin,[D]);
+			
+		fi;
+	fi;
+od;
+return thin;
+end);
+
+
+
+
+
+DeclareOperation("HomToModHelp",[IsList]);
+InstallMethod(HomToModHelp,"for a List",[IsList],0,function(LIST)
+local fList,SList,i;
+fList:=LIST[1];
+SList:=[];
+Append(SList,[Range(fList[1])]);
+for i in fList do 
+	Append(SList,[Source(i)]);
+od;
+return SList;
+end);
+
+
+
+DeclareOperation("ReverseList2",[IsList]);
+InstallMethod(ReverseList2,"List-Operation",[IsList],0,function(LIST)
+local SList,RList,n,i;
+SList:=LIST[1];
+n:=Size(SList);
+RList:=[];
+for i in [1..n] do 
+	Append(RList,[SList[n-i+1]]);
+od;
+return RList;
+end); 
+
+
+DeclareOperation("ReverseList",[IsList]);
+InstallMethod(ReverseList,"List-Operation",[IsList],0,function(LIST)
+local SList,RList,s;
+
+SList:=LIST[1];
+RList:=[];
+for s in SList do
+	Append(RList,[ReverseList2([s])]);
+od;
+return RList;
+end);
+
+DeclareOperation("HomToMod",[IsList]);
+InstallMethod(HomToMod,"for a List",[IsList],0,function(LIST)
+
+local fList,SList,i,KList;
+fList:=LIST[1];
+SList:=[];
+for i in fList do 
+	Append(SList,[HomToModHelp([i])]);
+od;
+KList:=ReverseList([SList]);
+return KList;
+end);
+
+DeclareOperation("FixFList",[IsList]);
+InstallMethod(FixFList,"List-Operation",[IsList],0,function(LIST)
+
+local fList,i,RetList,RetListH,k;
+
+fList:=LIST;
+RetList:=[];
+
+for i in fList do
+	RetListH:=[];
+	Append(RetListH,[i[1]]);
+	if(Size(i)>1) then
+		for k in [2..Size(i)] do
+			Append(RetListH,[i[k]*KernelInclusion(i[k-1])]);
+		od;
+	fi;
+	Append(RetList,[RetListH]);
+od;
+return RetList;
+end);
+
+
+
+DeclareOperation("WriteIGDToTxt",[IsList]);     
+InstallMethod(WriteIGDToTxt,"for a clean Output",[IsList],0,function(LIST)
+
+local Q,fList,Output,SList,max,DimList,s,i,k,Dec,l,fList2,texname,A;
+
+Q:=LIST[1];
+fList:=LIST[2];
+A:=LIST[3];
+
+ChangeDirectoryCurrent("Ergebnisse");
+texname:=LIST[4];
+
+s:=texname;
+SList:=HomToMod([fList]);
+
+
+Output:=OutputTextFile(s,false);;
+SetPrintFormattingStatus(Output,false);
+if(Size(fList)=0) then 
+	PrintTo(Output, "The Quiver: ");
+	PrintTo(Output,Q);
+	PrintTo(Output," with Relations: ");
+	PrintTo(Output,RelationsOfAlgebra(A));
+	PrintTo(Output," had Interval Global Dimension: 0");
+	return;
+fi;
+DimList:=[];
+for i in SList do 
+	Append(DimList,[Size(i)-1]);
+od;
+max:=Maximum(DimList);
+fList2:=FixFList(fList);
+
+PrintTo(Output, "The Quiver: ");
+PrintTo(Output,Q);
+PrintTo(Output," with Relations: ");
+PrintTo(Output,RelationsOfAlgebra(A));
+PrintTo(Output," had Interval Global Dimension: ");
+PrintTo(Output,max);
+PrintTo(Output,"\n\n\n");
+
+for i in [1..Size(SList)] do
+	PrintTo(Output,"The indecomposable Module: ");
+	PrintTo(Output,SList[i][Size(SList[i])]);
+	PrintTo(Output," with following Matrices: ");
+	PrintTo(Output,MatricesOfPathAlgebraModule(SList[i][Size(SList[i])]));
+	PrintTo(Output,"\n had the following Approximation:\n");
+	for k in [1..Size(SList[i])] do
+		PrintTo(Output,DimensionVector(SList[i][k]));
+		PrintTo(Output,"-->");
+	od;
+	PrintTo(Output,"0");
+	PrintTo(Output,"\n\n");
+	for k in [0..Size(fList2[i])-1] do 
+		PrintTo(Output,"f");
+		PrintTo(Output,k);
+		PrintTo(Output,":");
+		PrintTo(Output,DimensionVector(Source(fList2[i][k+1])));
+		PrintTo(Output,"-->");
+		PrintTo(Output,DimensionVector(Range(fList2[i][k+1])));
+		PrintTo(Output,"\n");
+		PrintTo(Output,MatricesOfPathAlgebraMatModuleHomomorphism(fList2[i][k+1]));
+		PrintTo(Output,"\n");
+	od;
+	PrintTo(Output,"\n");
+	for k in [1..Size(SList[i])-1] do
+		PrintTo(Output,"\n");
+		PrintTo(Output,"The Module:");
+		PrintTo(Output,SList[i][k]);
+		Dec:=DecomposeModule(SList[i][k]);
+		PrintTo(Output," was decomposed the following way: \n");
+		PrintTo(Output,DimensionVector(SList[i][k]));
+		PrintTo(Output,"=");
+		for l in [1..Size(Dec)-1] do
+			PrintTo(Output,DimensionVector(Dec[l]));
+			PrintTo(Output,"+");
+		od;
+		PrintTo(Output,DimensionVector(Dec[Size(Dec)]));
+		PrintTo(Output,"\n");
+		PrintTo(Output,"And had the following Matrices:\n");
+		PrintTo(Output,MatricesOfPathAlgebraModule(SList[i][k]));
+		PrintTo(Output,"\n");
+	od;
+	PrintTo(Output,"\n");
+	PrintTo(Output,"\n\n");
+od;
+end);
+
+
+
+DeclareOperation("IsInList",[IsPathAlgebraMatModule,IsList]);
+InstallMethod(IsInList, "for a List and a Module",[IsPathAlgebraMatModule,IsList],0,function(M1,LIST1)
+local T,L,i;
+T:=M1;
+L:=LIST1;
+for i in L do if(IsomorphicModules(T,i)) then return true; 
+fi;
+od;
+
+return false;
+end);
+
+DeclareOperation("TauModules",[IsList]); 
+
+InstallMethod(TauModules, "for a representation of a quiver",[IsList],0,function(LIST)
+
+local A,U,UU,TauModule,i;
+
+
+U:=LIST; #U are the thin modules
+TauModule:=[]; 
+for i in U do if((DTr(i)=ZeroModule(RightActingAlgebra(i)))=false) then if(IsInList(DTr(i),U)=false) then Append(TauModule,[DTr(i)]);fi;fi;od;
+return(TauModule);
+end);
+
+
+DeclareOperation("auTModules",[IsList]); #Returns a List of all needed Tau Modules. 
+
+InstallMethod(auTModules, "for a representation of a quiver",[IsList],0,function(LIST)
+
+local A,U,UU,i;
+
+
+U:=LIST[1]; #U are the thin modules
+UU:=[]; 
+for i in U do 
+	Append(UU,[TrD(i)]);
+od;
+return(UU);
+end);
+
+
+
+DeclareOperation("ThinSubmoduleSupp",[IsPathAlgebraMatModule]); 
+
+InstallMethod(ThinSubmoduleSupp,"for a representation of a quiver",[IsPathAlgebraMatModule],0,function(M1)
+
+local M,U,S,ST,SR,P,i,l;
+M:=M1;
+U:=AllSubmodulesOfModuleT(M);   
+S:=[];
+for i in [1..Size(U)] do 
+	for l in U[i] do 
+		Append(S,[Source(l)]);
+	od;
+od;
+ST:=Filtered(S,x->Maximum(DimensionVector(x))=1);
+ST:=DuplicateFreeList(ST);
+SR:=[];
+for i in ST do 
+	if(IsIndecomposableModule(i))=true then 
+		Append(SR,[i]); 
+	fi; 
+od;
+P:=BasicVersionOfModule(DirectSumOfQPAModules(SR));
+return(P);
+end);
+
+
+
+DeclareOperation("ThinSubmodulesList",[IsPathAlgebraMatModule,IsList]); 
+
+InstallMethod(ThinSubmodulesList,"for a representation of a quiver",[IsPathAlgebraMatModule,IsList],0,function(M1,L)
+
+local M,thin,U,S,ST,SR,P,i,l;
+M:=M1;
+thin:=L;
+if(IsSimpleQPAModule(M)=true) then
+	return([M]);
+fi;
+U:=AllSubmodulesOfModuleT(M);   
+S:=[];
+for i in [1..Size(U)] do 
+	if(Size(U[i])>0) then
+		for l in U[i] do 
+			Append(S,[Source(l)]);      
+		od;
+	fi;
+od;
+ST:=Filtered(S,x->IsInList(x,thin)=true);
+ST:=DuplicateFreeList(ST);
+P:=DecomposeModule(BasicVersionOfModule(DirectSumOfQPAModules(ST)));
+S:=[];
+for i in [1..Size(P)] do Append(S,[P[Size(P)-i+1]]); od;
+#Print("SubEnde");
+return(S);
+end);
+
+
+
+DeclareOperation("IsApproximation",[IsPathAlgebraMatModuleHomomorphism,IsPathAlgebraMatModule,IsList]);      
+InstallMethod(IsApproximation,"for a homomorphism of a quiver",[IsPathAlgebraMatModuleHomomorphism,IsPathAlgebraMatModule,IsList],0,function(f1,N1,LIST)
+
+local f,M,N,K,dHK,dHM,dHN,i,thinModules;
+f:=f1;
+M:=Source(f);   #0->K->M->N->0;
+K:=Source(KernelInclusion(f));
+N:=N1;
+thinModules:=LIST;
+for i in thinModules do
+	dHK:=Size(HomOverAlgebra(i,K));
+	dHM:=Size(HomOverAlgebra(i,M));
+	dHN:=Size(HomOverAlgebra(i,N));
+	if((dHK+dHN=dHM)=false) then
+		return (false); 
+	fi;
+od;
+return(true);
+end);
+
+
+DeclareOperation("SameSupp",[IsPathAlgebraMatModule,IsPathAlgebraMatModule]);   
+InstallMethod(SameSupp,"for 2 Modules over the Same Algebra",[IsPathAlgebraMatModule,IsPathAlgebraMatModule],0,function(N1,M1)
+
+local i,N,M,DimN,DimM;
+N:=N1;
+M:=M1;
+DimN:=DimensionVector(N);
+DimM:=DimensionVector(M);
+for i in [1..Size(DimN)] do 
+	if(DimN[i]=0) then
+		if(DimM[i]>0) then
+			return false;
+		fi;
+	fi;
+	if(DimN[i]>0) then
+		if(DimM[i]=0) then
+			return false;
+		fi;
+	fi;
+od;
+return true;
+
+end);
+
+DeclareOperation("SubSupp",[IsPathAlgebraMatModule,IsPathAlgebraMatModule]);   
+InstallMethod(SubSupp,"for 2 Modules over the Same Algebra",[IsPathAlgebraMatModule,IsPathAlgebraMatModule],0,function(N1,M1)
+
+local i,N,M,DimN,DimM;
+N:=N1;
+M:=M1;
+DimN:=DimensionVector(N);
+DimM:=DimensionVector(M);
+for i in [1..Size(DimN)] do 
+	if(DimN[i]>0) then
+		if(DimM[i]=0) then
+			return false;
+		fi;
+	fi;
+od;
+return true;
+
+end);
+
+
+DeclareOperation("DecD",[IsPathAlgebraMatModule,IsList]);
+
+InstallMethod(DecD,"for a representation of a quiver",[IsPathAlgebraMatModule,IsList],0,function(Ke,LIST)
+
+local K,L1,L2,i;
+
+K:=Ke;
+L1:=LIST;
+L2:=[];
+
+for i in [1..Size(L1)] do
+	if(IsDirectSummand(L1[i],K)=false) then
+		Append(L2,[L1[i]]);
+	fi;
+od;
+return L2;
+end);
+
+DeclareOperation("MHom",[IsList]);
+InstallMethod(MHom,"for a list of homomorphism",[IsList],0,function(LIST)
+
+local f,H,i;
+
+H:=LIST;
+for i in [1..Size(H)] do
+	if(i=1) then
+		f:=H[1];
+	fi;
+	if(i>1) then
+		f:=f+H[i];
+	fi;
+od;
+return f;
+end);
+
+
+DeclareOperation("ThinHomList",[IsPathAlgebraMatModule,IsList]); 
+
+InstallMethod(ThinHomList,"for a representation of a quiver",[IsPathAlgebraMatModule,IsList],0,function(N1,LIST)
+
+local N,i,thin,m,Er,Er2;
+N:=N1;
+thin:=LIST;
+Er:=[];
+Er2:=[];
+m:=1;
+for i in thin do 
+	if(SubSupp(i,N)) then
+		if(Size(HomOverAlgebra(i,N))>0) then
+			m:=Maximum(m,Dimension(i));
+			Append(Er2,[i]);
+		fi;
+	fi;
+od;
+while(m>0) do
+	for i in Er2 do
+		if(Dimension(i)=m) then
+			Append(Er,[i]);
+		fi;
+	od;
+	m:=m-1;
+od;
+for i in thin do
+	if(IsInList(i,Er)=false) then
+		Append(Er,[i]);
+	fi;
+od;
+return(Er);
+
+end);
+
+DeclareOperation("MinApproxViaList",[IsList,IsPathAlgebraMatModule,IsList]); 
+InstallMethod(MinApproxViaList,"for a representation of a quvier",[IsList,IsPathAlgebraMatModule,IsList],0,function(M1,N1,LIST)
+
+local Er,Numbers,k,N,M,D,f,i,thinModules,b,Dw,Hw,fw,Mr,H;
+
+N:=N1;
+M:=M1;
+thinModules:=LIST;
+D:=M[1];
+Er:=M;
+Dw:=DirectSumOfQPAModules(M);
+Hw:=HomOverAlgebra(Dw,N);
+fw:=MHom(Hw);
+Mr:=DecD(Kernel(fw),M);
+D:=DirectSumOfQPAModules(Mr);
+H:=HomOverAlgebra(D,N);
+f:=MHom(H);
+if(IsApproximation(f,N,thinModules)=true) then
+	if(IsRightMinimal(f)=true) then
+		return(f);
+	fi;
+fi;
+D:=M[1];
+
+b:=false;
+for i in [2..Size(Er)] do
+	D:=DirectSumOfQPAModules([D,Er[i]]);
+	if(b=false) then 
+		b:=SameSupp(D,N);	
+	fi;
+	if(b=true) then
+		f:=MinimalRightAddMApproximation(D,N);
+		if(IsRightMinimal(f))=true then
+			if(IsApproximation(f,N,thinModules)=true) then
+				return(f);
+			fi; 
+		fi; 
+	fi;
+od;
+return(false);
+end);
+
+
+
+DeclareOperation("MinApprox",[IsPathAlgebraMatModule,IsList]); 
+
+InstallMethod(MinApprox,"for a representation of a quiver",[IsPathAlgebraMatModule,IsList],0,function(N1,LIST)
+
+local M,N,f,thinModules,D;   
+N:=N1;
+thinModules:=LIST;
+M:=ThinSubmodulesList(N,thinModules);
+D:=DirectSumOfQPAModules(M);
+f:=MinApproxViaList(M,N,thinModules);
+return(f);
+end);
+
+
+
+DeclareOperation("IsThinDecomposable",[IsPathAlgebraMatModule,IsList]);
+InstallMethod(IsThinDecomposable,"for a representation of a quiver",[IsPathAlgebraMatModule,IsList],0,function(M1,LIST)
+
+local b,M,Sub,i,thin;
+thin:=LIST;
+M:=M1;
+b:=true;
+if(IsZero(M)) then
+	return true;
+fi;
+Sub:=DecomposeModule(M);
+for i in Sub do 
+	if(IsInList(i,thin)=false) then
+		b:=false;
+		return false;
+	fi;
+od;
+return(b);
+end);
+
+
+
+
+DeclareOperation("IGD",[IsPathAlgebraMatModule,IsList]); #For calculating the IGD
+InstallMethod(IGD,"for a Representation of a Quiver",[IsPathAlgebraMatModule,IsList],0,function(M1,LIST)
+
+local Appr,Ta,thin,f,b,i;
+thin:=LIST;
+Ta:=M1;
+b:=true;
+Appr:=[];
+i:=0;
+while b do
+	f:=MinApprox(Ta,thin);
+	Append(Appr,[f]);
+	i:=1;
+	Ta:=Source(KernelInclusion(f));
+	if(IsThinDecomposable(Ta,thin)=true) then 
+		b:=false; 
+	fi;
+od;
+return Appr;
+end);
+
+DeclareOperation("StartCalc",[IsAlgebra,IsQuiver]);
+InstallMethod(StartCalc,"for a Algebra",[IsAlgebra,IsQuiver],0,function(ALGEBRA,QUIVER)
+local A,Q,thin,T,Ker,i,Kern;
+A:=ALGEBRA;
+Q:=QUIVER;
+thin:=AllThinModules(A);
+T:=TauModules(thin);
+Ker:=[];
+for i in T do Append(Ker,[IGD(i,thin)]);od;
+Kern:=HomToMod([Ker]);
+WriteIGDToTxt([Q,Ker,A]);
+return Ker;
+end);
+
+DeclareOperation("StartCalcA",[IsAlgebra]);
+InstallMethod(StartCalcA,"for a Algebra",[IsAlgebra],0,function(ALGEBRA)
+local A,Q,thin,T,Ker,i,Kern;
+A:=ALGEBRA;
+Q:=QuiverOfPathAlgebra(A);
+thin:=AllThinModules(A);
+T:=TauModules(thin);
+Ker:=[];
+for i in T do Append(Ker,[IGD(i,thin)]);od;
+Kern:=HomToMod([Ker]);
+return Ker;
+end);
+
+
+
