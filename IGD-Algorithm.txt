@@ -494,30 +494,6 @@ end);
 
 
 
-DeclareOperation("ThinSubmoduleSupp",[IsPathAlgebraMatModule]); 
-
-InstallMethod(ThinSubmoduleSupp,"for a representation of a quiver",[IsPathAlgebraMatModule],0,function(M1)
-
-local M,U,S,ST,SR,P,i,l;
-M:=M1;
-U:=AllSubmodulesOfModuleT(M);   
-S:=[];
-for i in [1..Size(U)] do 
-	for l in U[i] do 
-		Append(S,[Source(l)]);
-	od;
-od;
-ST:=Filtered(S,x->Maximum(DimensionVector(x))=1);
-ST:=DuplicateFreeList(ST);
-SR:=[];
-for i in ST do 
-	if(IsIndecomposableModule(i))=true then 
-		Append(SR,[i]); 
-	fi; 
-od;
-P:=BasicVersionOfModule(DirectSumOfQPAModules(SR));
-return(P);
-end);
 
 
 
