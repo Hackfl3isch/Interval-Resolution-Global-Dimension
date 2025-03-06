@@ -370,7 +370,7 @@ Q:=LIST[1];
 fList:=LIST[2];
 A:=LIST[3];
 
-ChangeDirectoryCurrent("Ergebnisse");
+ChangeDirectoryCurrent("");
 texname:=LIST[4];
 
 s:=texname;
