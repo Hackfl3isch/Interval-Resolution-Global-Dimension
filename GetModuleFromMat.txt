@@ -1,0 +1,35 @@
+#Method to define a module from the .txt files that IGD-Algorithm.txt had as an output. 
+
+
+
+DeclareOperation("ModuleOverPathAlgebra",[IsAlgebra,IsList,IsList]);
+InstallMethod(ModuleOverPathAlgebra,"for a Algebra",[IsAlgebra,IsList,IsList],0,function(ALGEBRA,DimH,MatH)
+local A,Q,DimM,MatM,Arr,ArrL,i,j,M,k,Supp;
+
+A:=ALGEBRA;
+DimM:=DimH;
+MatM:=MatH;
+Q:=QuiverOfPathAlgebra(A);
+Arr:=ArrowsOfQuiver(Q);
+ArrL:=[];
+for i in [1..Size(Arr)] do
+	for k in [1..Size(VerticesOfQuiver(Q))] do
+		if(VerticesOfQuiver(Q)[k]=TargetOfPath(Arr[i])) then 
+			if(DimM[k]>0) then
+				for j in [1..Size(VerticesOfQuiver(Q))] do
+					if(VerticesOfQuiver(Q)[j]=SourceOfPath(Arr[i])) then
+						if(DimM[j]>0) then
+							Append(ArrL,[[String(Arr[i]),MatM[i]]]);
+						fi;
+					fi;
+				od;
+
+			fi;
+		fi;
+	od;
+od;
+M:=RightModuleOverPathAlgebra(A,DimM,ArrL);
+return M;
+end);
+
+#Call with: M:=ModuleOverPathAlgebra(ALGEBRA,DIMENSIONVECTOR,MATRICES);
