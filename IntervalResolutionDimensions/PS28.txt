@@ -1,1 +1,0 @@
-The Quiver: Quiver( ["v1","v2","v3","v4","v5"], [["v2","v3","x23"],["v3","v4","x34"],["v4","v5","x45"],["v1","v5","x15"]] ) with Relations: [  ] had Interval Global Dimension: 0

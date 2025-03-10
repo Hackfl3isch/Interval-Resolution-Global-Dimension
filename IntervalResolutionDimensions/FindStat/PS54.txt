@@ -1,1 +1,0 @@
-The Quiver: Quiver( ["v1","v2","v3","v4","v5"], [["v1","v3","x13"],["v1","v4","x14"],["v3","v5","x35"],["v4","v2","x42"],["v2","v5","x25"]] ) with Relations: [ (Z(3))*x13*x35+(Z(3)^0)*x14*x42*x25 ] had Interval Global Dimension: 0

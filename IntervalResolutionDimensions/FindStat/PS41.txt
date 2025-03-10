@@ -1,1 +1,0 @@
-The Quiver: Quiver( 5, [[3,4,"x34"],[3,5,"x35"],[2,4,"x24"],[2,5,"x25"],[1,4,"x14"],[1,5,"x15"]] ) with Relations: [  ] had Interval Global Dimension: 3
