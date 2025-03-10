@@ -1,0 +1,48 @@
+The Quiver: Quiver( ["v1","v2","v3","v4","v5","v6"], [["v2","v1","a1"],["v2","v3","a2"],["v4","v2","a3"],["v5","v1","a4"],["v5","v6","a5"]] ) with Relations: [  ] had Interval Global Dimension: 1
+
+
+The indecomposable Module: <Module over <GF(3)[<quiver with 6 vertices and 5 arrows>]> with dimension vector [ 1, 2, 1, 1, 1, 0 ]> with following Matrices: [ [ [ Z(3)^0 ], [ 0*Z(3) ] ], [ [ 0*Z(3) ], [ Z(3)^0 ] ], [ [ Z(3)^0, Z(3) ] ], [ [ Z(3)^0 ] ], [ [ 0*Z(3) ] ] ]
+ had the following Approximation:
+[ 2, 3, 2, 1, 2, 0 ]-->[ 1, 2, 1, 1, 1, 0 ]-->0
+
+f0:[ 2, 3, 2, 1, 2, 0 ]-->[ 1, 2, 1, 1, 1, 0 ]
+[ [ [ Z(3)^0 ], [ Z(3)^0 ] ], [ [ Z(3)^0, Z(3) ], [ Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ], [ [ Z(3)^0 ], [ Z(3)^0 ] ], [ [ Z(3)^0 ] ], [ [ Z(3)^0 ], [ Z(3)^0 ] ], [ [ 0*Z(3) ] ] ]
+
+
+The Module:<Module over <GF(3)[<quiver with 6 vertices and 5 arrows>]> with dimension vector [ 2, 3, 2, 1, 2, 0 ]> was decomposed the following way: 
+[ 2, 3, 2, 1, 2, 0 ]=[ 1, 1, 1, 1, 1, 0 ]+[ 1, 1, 0, 0, 1, 0 ]+[ 0, 1, 1, 0, 0, 0 ]
+And had the following Matrices:
+[ [ [ Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3)^0 ], [ 0*Z(3), 0*Z(3) ] ], [ [ Z(3), 0*Z(3) ], [ 0*Z(3), 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ], [ [ Z(3)^0, 0*Z(3), 0*Z(3) ] ], [ [ Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ], [ [ 0*Z(3) ], [ 0*Z(3) ] ] ]
+
+
+
+The indecomposable Module: <Module over <GF(3)[<quiver with 6 vertices and 5 arrows>]> with dimension vector [ 1, 2, 1, 1, 1, 1 ]> with following Matrices: [ [ [ Z(3)^0 ], [ 0*Z(3) ] ], [ [ 0*Z(3) ], [ Z(3)^0 ] ], [ [ Z(3)^0, Z(3) ] ], [ [ Z(3)^0 ] ], [ [ Z(3)^0 ] ] ]
+ had the following Approximation:
+[ 2, 3, 2, 1, 2, 2 ]-->[ 1, 2, 1, 1, 1, 1 ]-->0
+
+f0:[ 2, 3, 2, 1, 2, 2 ]-->[ 1, 2, 1, 1, 1, 1 ]
+[ [ [ Z(3)^0 ], [ Z(3)^0 ] ], [ [ Z(3)^0, Z(3) ], [ Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ], [ [ Z(3)^0 ], [ Z(3)^0 ] ], [ [ Z(3)^0 ] ], [ [ Z(3)^0 ], [ Z(3)^0 ] ], [ [ Z(3)^0 ], [ Z(3)^0 ] ] ]
+
+
+The Module:<Module over <GF(3)[<quiver with 6 vertices and 5 arrows>]> with dimension vector [ 2, 3, 2, 1, 2, 2 ]> was decomposed the following way: 
+[ 2, 3, 2, 1, 2, 2 ]=[ 1, 1, 1, 1, 1, 1 ]+[ 1, 1, 0, 0, 1, 1 ]+[ 0, 1, 1, 0, 0, 0 ]
+And had the following Matrices:
+[ [ [ Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3)^0 ], [ 0*Z(3), 0*Z(3) ] ], [ [ Z(3), 0*Z(3) ], [ 0*Z(3), 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ], [ [ Z(3)^0, 0*Z(3), 0*Z(3) ] ], [ [ Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ], [ [ Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ] ]
+
+
+
+The indecomposable Module: <Module over <GF(3)[<quiver with 6 vertices and 5 arrows>]> with dimension vector [ 1, 2, 1, 1, 0, 0 ]> with following Matrices: [ [ [ Z(3)^0 ], [ 0*Z(3) ] ], [ [ 0*Z(3) ], [ Z(3)^0 ] ], [ [ Z(3)^0, Z(3) ] ], [ [ 0*Z(3) ] ], [ [ 0*Z(3) ] ] ]
+ had the following Approximation:
+[ 2, 3, 2, 1, 0, 0 ]-->[ 1, 2, 1, 1, 0, 0 ]-->0
+
+f0:[ 2, 3, 2, 1, 0, 0 ]-->[ 1, 2, 1, 1, 0, 0 ]
+[ [ [ Z(3)^0 ], [ Z(3)^0 ] ], [ [ Z(3)^0, Z(3) ], [ Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ], [ [ Z(3)^0 ], [ Z(3)^0 ] ], [ [ Z(3)^0 ] ], [ [ 0*Z(3) ] ], [ [ 0*Z(3) ] ] ]
+
+
+The Module:<Module over <GF(3)[<quiver with 6 vertices and 5 arrows>]> with dimension vector [ 2, 3, 2, 1, 0, 0 ]> was decomposed the following way: 
+[ 2, 3, 2, 1, 0, 0 ]=[ 1, 1, 1, 1, 0, 0 ]+[ 1, 1, 0, 0, 0, 0 ]+[ 0, 1, 1, 0, 0, 0 ]
+And had the following Matrices:
+[ [ [ Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3)^0 ], [ 0*Z(3), 0*Z(3) ] ], [ [ Z(3), 0*Z(3) ], [ 0*Z(3), 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ], [ [ Z(3)^0, 0*Z(3), 0*Z(3) ] ], [ [ 0*Z(3), 0*Z(3) ] ], [ [ 0*Z(3) ] ] ]
+
+
+
