@@ -1,0 +1,18 @@
+The Quiver: Quiver( ["v1","v2","v3","v4"], [["v2","v4","x24"],["v1","v4","x14"],["v4","v3","x43"]] ) with Relations: [  ] had Interval Global Dimension: 1
+
+
+The indecomposable Module: <Module over <GF(3)[<quiver with 4 vertices and 3 arrows>]> with dimension vector [ 1, 1, 1, 2 ]> with following Matrices: [ [ [ Z(3)^0, 0*Z(3) ] ], [ [ Z(3)^0, Z(3) ] ], [ [ Z(3)^0 ], [ 0*Z(3) ] ] ]
+ had the following Approximation:
+[ 1, 1, 2, 3 ]-->[ 1, 1, 1, 2 ]-->0
+
+f0:[ 1, 1, 2, 3 ]-->[ 1, 1, 1, 2 ]
+[ [ [ Z(3) ] ], [ [ Z(3)^0 ] ], [ [ Z(3) ], [ Z(3)^0 ] ], [ [ Z(3), Z(3)^0 ], [ Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ] ]
+
+
+The Module:<Module over <GF(3)[<quiver with 4 vertices and 3 arrows>]> with dimension vector [ 1, 1, 2, 3 ]> was decomposed the following way: 
+[ 1, 1, 2, 3 ]=[ 1, 0, 1, 1 ]+[ 0, 1, 1, 1 ]+[ 0, 0, 0, 1 ]
+And had the following Matrices:
+[ [ [ 0*Z(3), Z(3)^0, 0*Z(3) ] ], [ [ Z(3)^0, 0*Z(3), 0*Z(3) ] ], [ [ Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3)^0 ], [ 0*Z(3), 0*Z(3) ] ] ]
+
+
+
