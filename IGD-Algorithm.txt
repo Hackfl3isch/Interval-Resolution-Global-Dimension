@@ -664,7 +664,7 @@ return(Er);
 end);
 
 DeclareOperation("MinApproxViaList",[IsList,IsPathAlgebraMatModule,IsList]); 
-InstallMethod(MinApproxViaList,"for a representation of a quvier",[IsList,IsPathAlgebraMatModule,IsList],0,function(M1,N1,LIST)
+InstallMethod(MinApproxViaList,"for a representation of a quiver",[IsList,IsPathAlgebraMatModule,IsList],0,function(M1,N1,LIST)
 
 local Er,Numbers,k,N,M,D,f,i,thinModules,b,Dw,Hw,fw,Mr,H;
 
